@@ -1,0 +1,67 @@
+Estructura del algoritmo teoricamente:
+    - Al final el algoritmo va de hacer un quorum entre los diferentes nodos de un cluster.
+    - Para poder entrar en la SC necesitamos recolectar suficientes votos
+    - Tendrá una estructura muy parecida a la siguiente:
+        · Pi = conjunto de procesos
+        · Vi = set de votaciones de un proceso
+        · K = numero de votaciones dentro de un set de votaciones (K = √|Pi|)
+        · M = numero de veces que aparece un proceso en los diferentes sets (M = √|Pi| = K)
+        · Es obligatorio que entre 2 sets de votaciones distintos siempre haya
+                un proceso en común***preguntar
+        · El algoritmo de Maekawa solo funciona correctamente cuando M/K > 2
+
+        PE, para un conjunto de 4 procesos podemos tener:
+            * Sabemos que K = √4 = 2 = M
+            * Por lo tanto un set de votaciones puede ser:
+                V1 = (P2,P3)
+
+Info que puedo sacar de las clases:
+    > config
+        - config es una clase con 3 declaraciones globales como son: numNodes, puerto, exec_time
+
+    > utils
+        - es una clase con 2 métodos de sockets, uno crea un server socket y el otro crea un client socker.
+        En ambos casos se devuelve el socket en cuestión.
+
+    > message
+        - es una clase que define el objeto "mensaje", tiene lo siguientes atributos de clase:
+            · Tipo de mensaje
+            · Destino
+            · Fuente
+            · ts (ni idea)
+            · Fecha en la que se ha realizado (data)
+        - Tiene un método que convierte el mensaje en un json
+        - Tiene un metodo __json__ que no tengo muy claro que hace
+        - Bastantes setters
+
+    > main
+        - es una clase que simplemente crea el objeto "maekawaMutex" y lo lanza
+
+    > nodeSend
+        - es una clase la cual convierte un nodo en un nodo de tipo "cliente". 
+        - dentro de este nodo tendremos tantos client_sockets como se haya especificado en numNodes.
+        - "build_connections" irá conectando los nodos al puerto especificado  en config + la iteración 
+        en la que esté
+        - "send_message" necesita (mensaje, destino, multicast = False (predeterminado)), en el caso de no
+        ser multicast:
+            · incrementará lamport_ts(sigo sin saber que es)
+            · si es multicast hace un "sendall"
+        - "multicast" necesitará un grupo de gente, irá recogiendo cada destinatario del grupo
+        y le mandará el mensaje cada vez
+    
+    > nodeServer
+        - es una clase la cual convierte un nodo en un nodo tipo "servidor"
+        - "update" hace bastantes cosas:
+            · hace la creación del server_socket y guarda una especie de lista de conexiones
+            · NO ENTIENDO NADA DE LO QUE SUCEDE
+
+    > maekawaMutex
+        - inicializa tantos nodos como haya en la configuración, cada uno hace las conexiones
+        de los nodos_cliente que tiene creado dentro de ellos mismos.
+
+    > node
+        - se inicializa a si mismo como un id, puerto, daemon??? y lamport_ts???
+        - guarda en una variable a un servidor y asigna los colegas de ese servidor
+        - "do_connections" hace las conexiones del nodo_cliente de dentro mismo
+        - A CONTINUACIÓN NI IDEA DE LO QUE HAY QUE HACER
+
